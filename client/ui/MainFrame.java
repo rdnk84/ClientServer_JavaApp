@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 
 public class MainFrame extends JFrame {
-//    private final Client client;
+    private final Client client;
 
     private JButton buttonSend;
     private JTextField textField;
@@ -25,21 +25,26 @@ public class MainFrame extends JFrame {
         contentManager = new JPanel();
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new FlowLayout());
-//       client = new Client(InetAddress.getByName("127.0.0.1"), 9000);
+        client = new Client("127.0.0.1", 9000);
         setSize(600, 300);
-        setVisible(true);
+
         setContentPane(contentManager);
         buttonSend.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() == buttonSend) {
                     String s = textField.getText();
+                    try {
+                        client.sendToServer(s);
+                    } catch (IOException ioException) {
+                        ioException.printStackTrace();
+                    }
                 }
             }
         });
         add(buttonSend);
         add(textField);
-        add(contentManager);
+        setVisible(true);
     }
 
 

@@ -12,6 +12,7 @@ public class Server {
     private ArrayList<ClientThread> clients;
 
     public static void main(String[] args) throws IOException {
+        System.out.println("Is waiting for a client...");
         new Server();
         System.out.println("THE END!!!");
 
@@ -19,13 +20,22 @@ public class Server {
 
     public Server() throws IOException {
         serverSocket = new ServerSocket(PORT);
+
+        //в переменной clients наш сервер собирает всех клиентов (в arrayList), которые подключаются к серверу
         clients = new ArrayList<>();
         while (true) {
+
             ClientThread client = new ClientThread(serverSocket.accept());
+
             client.start();
             clients.add(client);
         }
     }
+
+    //сериализация входящего клиента
+//    private static void serData() {
+//ObjectOutputStream write = new ObjectOutputStream();
+//    }
 
     //вложенный класс, запускается при подключении нового клиента к серверу
     class ClientThread extends Thread {
@@ -41,10 +51,6 @@ public class Server {
             this.id = clients.size();
 
             this.clientSocket = clientSocket;
-            /*TODO: understand the difference with ObjectInputStream*/
-            BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            String readedMessage = reader.readLine();
-            System.out.println(readedMessage);
 
             write = new ObjectOutputStream(clientSocket.getOutputStream());
             read = new ObjectInputStream(clientSocket.getInputStream());
@@ -59,15 +65,14 @@ public class Server {
                 while (true) {
 
                     String message = (String) read.readObject();
-                    System.out.printf("client.net.Client %d: %s\n", id, message);
-                    if(message.toLowerCase().compareTo("hello") == 0) {
+                    System.out.printf("client %d: %s\n", id, message);
+                    if (message.toLowerCase().compareTo("hello") == 0) {
                         write.writeObject("blabla");
                         write.flush();
                     }
                 }
 
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
@@ -84,7 +89,6 @@ public class Server {
 
         }
     }
-
 
 }
 
