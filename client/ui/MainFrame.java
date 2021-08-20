@@ -1,31 +1,39 @@
 package client.ui;
 
-import client.net.Client;
+import client.net.ServerListener;
+import client.net.SocketClient;
+import client.net.Message;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.net.InetAddress;
+import java.util.Random;
 
 public class MainFrame extends JFrame {
-    private final Client client;
+    private final SocketClient socketClient;
 
     private JButton buttonSend;
     private JTextField textField;
     private JPanel contentManager;
     private JTextArea textArea;
 
+    private Integer clientId;
+
 
     public MainFrame() throws IOException {
-        super("Client");
+        super("SocketClient");
+
+        Random random = new Random();
+        clientId = random.nextInt();
+
         buttonSend = new JButton("Send");
         textField = new JTextField(30);
         contentManager = new JPanel();
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new FlowLayout());
-        client = new Client("127.0.0.1", 9000);
+        socketClient = new SocketClient(15, "127.0.0.1", 9000);
         setSize(600, 300);
 
         setContentPane(contentManager);
@@ -35,7 +43,7 @@ public class MainFrame extends JFrame {
                 if (e.getSource() == buttonSend) {
                     String s = textField.getText();
                     try {
-                        client.sendToServer(s);
+                        socketClient.sendMessage(new Message(clientId, s));
                     } catch (IOException ioException) {
                         ioException.printStackTrace();
                     }
@@ -44,7 +52,12 @@ public class MainFrame extends JFrame {
         });
         add(buttonSend);
         add(textField);
+        //хочу получить ответ от серсера
+       // JOptionPane.showMessageDialog(null, (String)"Вы прислали:" + socketClient.sendToServer(););
         setVisible(true);
+
+        ServerListener serverListener = new ServerListener(socketClient);
+        serverListener.run();
     }
 
 

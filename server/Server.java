@@ -1,34 +1,40 @@
 package server;
 
+import client.net.Message;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Server {
     public static final int PORT = 9000;
     private ServerSocket serverSocket;
 
-    private ArrayList<ClientThread> clients;
+   // private ArrayList<ClientThread> clients;
+
+    private HashMap<String,Integer> clients;
 
     public static void main(String[] args) throws IOException {
         System.out.println("Is waiting for a client...");
         new Server();
         System.out.println("THE END!!!");
-
     }
 
     public Server() throws IOException {
         serverSocket = new ServerSocket(PORT);
 
         //в переменной clients наш сервер собирает всех клиентов (в arrayList), которые подключаются к серверу
-        clients = new ArrayList<>();
+       // clients = new ArrayList<>();
+
+//        HashMap<String,Object> clients = new HashMap<>();
         while (true) {
 
             ClientThread client = new ClientThread(serverSocket.accept());
 
             client.start();
-            clients.add(client);
+           // clients.put(client); - не понимаю как мне положить
         }
     }
 
@@ -48,7 +54,7 @@ public class Server {
         //конструктор
         public ClientThread(Socket clientSocket) throws IOException {
 
-            this.id = clients.size();
+//            this.id = clients.size();
 
             this.clientSocket = clientSocket;
 
@@ -64,12 +70,14 @@ public class Server {
             try {
                 while (true) {
 
-                    String message = (String) read.readObject();
+                    Message message = (Message) read.readObject();
+
+
                     System.out.printf("client %d: %s\n", id, message);
-                    if (message.toLowerCase().compareTo("hello") == 0) {
+//                    if (message.getPayload().toLowerCase().compareTo("hello") == 0) {
                         write.writeObject("blabla");
                         write.flush();
-                    }
+//                    }
                 }
 
             } catch (IOException e) {
