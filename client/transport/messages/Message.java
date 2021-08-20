@@ -1,17 +1,18 @@
-package client.net;
+package client.transport.messages;
 
 import java.io.Serializable;
 
 public class Message implements Serializable {
-    private Integer clientId;
+
+    private Integer clientIdFrom;
     private String payload;
 
-    public Integer getClientId() {
-        return clientId;
+    public Integer getClientIdFrom() {
+        return clientIdFrom;
     }
 
-    public void setClientId(Integer clientId) {
-        this.clientId = clientId;
+    public void setClientIdFrom(Integer clientIdFrom) {
+        this.clientIdFrom = clientIdFrom;
     }
 
     public String getPayload() {
@@ -22,15 +23,15 @@ public class Message implements Serializable {
         this.payload = payload;
     }
 
-    public Message(Integer clientId, String payload) {
-        this.clientId = clientId;
+    public Message(Integer clientIdFrom, String payload) {
+        this.clientIdFrom = clientIdFrom;
         this.payload = payload;
     }
 
     @Override
     public String toString() {
         return "Message{" +
-                "clientId=" + clientId +
+                "clientId=" + clientIdFrom +
                 ", payload='" + payload + '\'' +
                 '}';
     }
