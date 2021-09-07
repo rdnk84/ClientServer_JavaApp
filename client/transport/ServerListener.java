@@ -1,5 +1,7 @@
 package client.transport;
 
+import client.transport.messages.MessageReceiver;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
@@ -16,8 +18,9 @@ public class ServerListener extends Thread {
     public void run() {
         try {
             while (true) {
-                ObjectInputStream in = socketConnection.getIn();
-                Object message = in.readObject();
+                Object message = MessageReceiver.receiveMessage(socketConnection);
+
+                //теперь то,что выловил Клиент со стороны сервера нам надо вывести в консоли на экран
                 System.out.println(message);
             }
         } catch (IOException | ClassNotFoundException e) {

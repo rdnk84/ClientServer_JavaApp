@@ -37,7 +37,7 @@ public class ClientMainFrame extends JFrame {
                 if (e.getSource() == buttonSend) {
                     String s = textField.getText();
                     try {
-                        MessageSender.sendMessage(new Message(1, s), socketConnection);
+                        MessageSender.sendMessage(new Message(s), socketConnection);
                     } catch (IOException ioException) {
                         ioException.printStackTrace();
                     }

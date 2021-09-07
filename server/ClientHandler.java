@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class ClientHandler extends Thread {
 
@@ -21,13 +22,22 @@ public class ClientHandler extends Thread {
 
     @Override
     public void run() {
-        System.out.println("New client is connected");
+        System.out.println("New client is connected (включился класс ClientHandler)");
         try {
             while (true) {
                 Message message = (Message) in.readObject();
 
                 System.out.printf("client: %s\n", message);
-                out.writeObject(new Message(1, "Some answer"));
+
+                //как-то надо получить список всех клиентов (собранных сервером в hashmap)и дальше через for отправить сообщение каждому)
+
+
+                //считываю сообщение (ну пока из консоли)
+                Scanner scanner = new Scanner(System.in);
+                String msgFromSrv = scanner.nextLine();
+
+//                out.writeObject(new Message("Some answer"));
+                out.writeObject(new Message(msgFromSrv));
                 out.flush();
             }
 
