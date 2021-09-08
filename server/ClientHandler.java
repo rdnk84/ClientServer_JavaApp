@@ -1,53 +1,63 @@
 package server;
 
 import client.transport.messages.Message;
+import server.model.ClientInfo;
+import server.transport.messages.MessageSender;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.Scanner;
+import java.util.Map;
 
 public class ClientHandler extends Thread {
 
     private Socket socket;
-    private ObjectInputStream in;
-    private ObjectOutputStream out;
 
-    public ClientHandler(Socket socket) throws IOException {
+    private Map<Integer, ClientInfo> clientInfoMap;
+    private ClientInfo thisClientInfo;
+
+    public ClientHandler(Socket socket, ClientInfo thisClientInfo, Map<Integer, ClientInfo> clientInfoMap) throws IOException {
         this.socket = socket;
-        this.out = new ObjectOutputStream(socket.getOutputStream());
-        this.in = new ObjectInputStream(socket.getInputStream());
+        this.thisClientInfo = thisClientInfo;
+        this.clientInfoMap = clientInfoMap;
     }
 
     @Override
     public void run() {
         System.out.println("New client is connected (включился класс ClientHandler)");
+
         try {
             while (true) {
-                Message message = (Message) in.readObject();
+                ObjectInputStream in = thisClientInfo.getIn();
 
-                System.out.printf("client: %s\n", message);
+                Message msg = (Message) in.readObject();
 
-                //как-то надо получить список всех клиентов (собранных сервером в hashmap)и дальше через for отправить сообщение каждому)
+                System.out.printf("client: %s\n", msg);
 
-
+                //как-то надо пalue
                 //считываю сообщение (ну пока из консоли)
-                Scanner scanner = new Scanner(System.in);
-                String msgFromSrv = scanner.nextLine();
+//                Scanner scanner = new Scanner(System.in);
+//                String msgFromSrv = scanner.nextLine();
+//                Message messageFromConsole = new Message(msgFromSrv);
+//
 
-//                out.writeObject(new Message("Some answer"));
-                out.writeObject(new Message(msgFromSrv));
-                out.flush();
+                for (ClientInfo clientInfo : clientInfoMap.values()) {
+                    if(!clientInfo.equals(thisClientInfo)) {
+
+                        String fromClient = msg.getPayload() + "111";
+                        msg.setPayload(fromClient);
+                        MessageSender.sendMessage(msg, clientInfo);
+                    }
+                }
+
             }
-
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
             try {
                 socket.close();
-                in.close();
-                out.close();
+                thisClientInfo.getIn().close();
+                thisClientInfo.getOut().close();
             } catch (IOException e) {
                 e.printStackTrace();
             }

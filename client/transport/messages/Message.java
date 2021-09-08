@@ -4,9 +4,7 @@ import java.io.Serializable;
 
 public class Message implements Serializable {
 
-
     private String payload;
-
 
     public String getPayload() {
         return payload;
@@ -17,7 +15,6 @@ public class Message implements Serializable {
     }
 
     public Message(String payload) {
-
         this.payload = payload;
     }
 

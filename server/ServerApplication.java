@@ -40,7 +40,7 @@ public class ServerApplication {
 //            clients.put(remoteSocketAddress, clientInfo);
             clients.put(clientPort, clientInfo);
 
-            ClientHandler client = new ClientHandler(clientSocket);
+            ClientHandler client = new ClientHandler(clientSocket, clientInfo, clients);
             client.start();
 
             //экспериментирую..
